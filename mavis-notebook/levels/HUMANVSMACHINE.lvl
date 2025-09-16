@@ -1,0 +1,17 @@
+#domain
+hospital
+#levelname
+HUMANVSMACHINE
+#colors
+blue: 0, 1 
+#initial
+++++
++0 +
++1 +
+++++
+#goal
+++++
++  +
++ 0+
+++++
+#end
