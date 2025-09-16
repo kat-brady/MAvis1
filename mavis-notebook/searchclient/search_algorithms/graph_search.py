@@ -44,7 +44,7 @@ def graph_search(
     frontier.prepare(goal_description)
 
     # Clear the parent pointer and cost in order make sure that the initial state is a root node
-    initial_state.parent = None
+    initial_state.parent = frontier.add(initial_state)
     initial_state.path_cost = 0
 
 
