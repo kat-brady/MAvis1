@@ -96,26 +96,26 @@ class FrontierBestFirst:
         self.goal_description = goal_description
         # Prepare is called at the beginning of a search and since we will sometimes reuse frontiers for multiple
         # searches, prepares must ensure that state is cleared.
-        # Your code here...
-        raise NotImplementedError()
+        self.priority_queue.clear()
 
     def f(self, state: h_state.HospitalState, goal_description: h_goal_description.HospitalGoalDescription) -> int:
         raise Exception("FrontierBestFirst should not be directly used. Instead use a subclass overriding f()")
 
     def add(self, state: h_state.HospitalState):
-        raise NotImplementedError()
+        priority = self.f(state, self.goal_description)
+        self.priority_queue.add(state, priority)
 
     def pop(self) -> h_state.HospitalState:
-        raise NotImplementedError()
+        return self.priority_queue.pop()
 
     def is_empty(self) -> bool:
-        raise NotImplementedError()
+        return self.priority_queue.size() == 0
 
     def size(self) -> int:
-        raise NotImplementedError()
+        return self.priority_queue.size()
 
     def contains(self, state: h_state.HospitalState) -> bool:
-        raise NotImplementedError()
+        return self.priority_queue.get_priority(state) is not None
 
 
 # The FrontierAStar and FrontierGreedy classes extend the FrontierBestFirst class, that is, they are
@@ -137,5 +137,5 @@ class FrontierGreedy(FrontierBestFirst):
         self.heuristic = heuristic
 
     def f(self, state: h_state.HospitalState, goal_description: h_goal_description.HospitalGoalDescription) -> int:
-        raise NotImplementedError()
+        return self.heuristic(state, goal_description)
     
