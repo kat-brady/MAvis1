@@ -128,8 +128,16 @@ class FrontierAStar(FrontierBestFirst):
         super().__init__()
         self.heuristic = heuristic
 
-    def f(self, state: h_state.HospitalState, goal_description: h_goal_description.HospitalGoalDescription) -> int:
-        raise NotImplementedError()
+    def g(self, state: h_state.HospitalState) -> int:
+        return getattr(state, "g", getattr(state, "path_cost", 0))
+
+    def h(self, state: h_state.HospitalState,
+          goal_description: h_goal_description.HospitalGoalDescription) -> int:
+        return self.heuristic(state, goal_description)
+
+    def f(self, state: h_state.HospitalState,
+          goal_description: h_goal_description.HospitalGoalDescription) -> int:
+        return self.g(state) + self.h(state, goal_description)
         
 
 class FrontierGreedy(FrontierBestFirst):
@@ -141,3 +149,4 @@ class FrontierGreedy(FrontierBestFirst):
     def f(self, state: h_state.HospitalState, goal_description: h_goal_description.HospitalGoalDescription) -> int:
         return self.heuristic.h(state, goal_description)
     
+
