@@ -26,6 +26,11 @@ class HospitalZeroHeuristic:
     def __init__(self):
         pass
 
+    def __call__(self, state: h_state.HospitalState, 
+                goal_description: h_goal_description.HospitalGoalDescription) -> int:
+        self.preprocess(state.level)
+        self.h(state, goal_description)
+        
     def preprocess(self, level: h_level.HospitalLevel):
         # This function will be called a single time prior 
         # to the search allowing us to preprocess the level such as
@@ -40,19 +45,35 @@ class HospitalZeroHeuristic:
 class HospitalGoalCountHeuristics:
 
     def __init__(self):
-        raise NotImplementedError()
+        pass
+
+    # not sure if this is how you use call?
+    def __call__(self, state: h_state.HospitalState, 
+                goal_description: h_goal_description.HospitalGoalDescription) -> int:
+        self.preprocess(state.level)
+        self.h(state, goal_description)
 
 
     def preprocess(self, level: h_level.HospitalLevel):
         # This function will be called a single time prior 
         # to the search allowing us to preprocess the level such as
         # pre-computing lookup tables or other acceleration structures
-       raise NotImplementedError()
+
+        # not sure what there is to preprocess
+        pass
+        #    raise NotImplementedError()
     
     def h(self, state: h_state.HospitalState, 
                 goal_description: h_goal_description.HospitalGoalDescription) -> int:
-        # your code here...
-        raise NotImplementedError()
+        remaining = goal_description.num_sub_goals()
+
+        # maybe making a list of sub goals would be something to preprocess?
+        for goal in goal_description.goals:
+            if goal[2] == True:
+                remaining -= 1
+        
+        return remaining
+        # raise NotImplementedError()
 
 class HospitalAdvancedHeuristics:
 
