@@ -25,11 +25,6 @@ import domains.hospital.level as h_level
 class HospitalZeroHeuristic:
     def __init__(self):
         pass
-
-    def __call__(self, state: h_state.HospitalState, 
-                goal_description: h_goal_description.HospitalGoalDescription) -> int:
-        self.preprocess(state.level)
-        self.h(state, goal_description)
         
     def preprocess(self, level: h_level.HospitalLevel):
         # This function will be called a single time prior 
@@ -47,13 +42,6 @@ class HospitalGoalCountHeuristics:
     def __init__(self):
         pass
 
-    # not sure if this is how you use call?
-    def __call__(self, state: h_state.HospitalState, 
-                goal_description: h_goal_description.HospitalGoalDescription) -> int:
-        self.preprocess(state.level)
-        self.h(state, goal_description)
-
-
     def preprocess(self, level: h_level.HospitalLevel):
         # This function will be called a single time prior 
         # to the search allowing us to preprocess the level such as
@@ -62,7 +50,10 @@ class HospitalGoalCountHeuristics:
         # not sure what there is to preprocess
         pass
         #    raise NotImplementedError()
-    
+
+
+    # TODO: modify GoalCount so that for every goal you check if an agent 
+    # of the corresponding character is occupying it
     def h(self, state: h_state.HospitalState, 
                 goal_description: h_goal_description.HospitalGoalDescription) -> int:
         remaining = goal_description.num_sub_goals()

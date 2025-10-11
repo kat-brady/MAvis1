@@ -129,11 +129,12 @@ class FrontierAStar(FrontierBestFirst):
         self.heuristic = heuristic
 
     def g(self, state: h_state.HospitalState) -> int:
-        return getattr(state, "g", getattr(state, "path_cost", 0))
+        # return getattr(state, "g", getattr(state, "path_cost", 0))
+        return state.path_cost
 
     def h(self, state: h_state.HospitalState,
           goal_description: h_goal_description.HospitalGoalDescription) -> int:
-        return self.heuristic(state, goal_description)
+        return self.heuristic.h(state, goal_description)
 
     def f(self, state: h_state.HospitalState,
           goal_description: h_goal_description.HospitalGoalDescription) -> int:
