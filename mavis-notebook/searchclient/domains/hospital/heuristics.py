@@ -24,31 +24,47 @@ import domains.hospital.level as h_level
 
 class HospitalZeroHeuristic:
     def __init__(self):
-        pass
+        self.goal_positions = defaultdict(list)
         
     def preprocess(self, level: h_level.HospitalLevel):
         # This function will be called a single time prior 
         # to the search allowing us to preprocess the level such as
         # pre-computing lookup tables or other acceleration structures
-        pass
+        self.goal_positions = defaultdict(list)
+        for(x,y), letter in level.goals.items():
+            self.goal_positions[letter].append((x,y))
+        
 
     def h(self, state: h_state.HospitalState, 
                 goal_description: h_goal_description.HospitalGoalDescription) -> int:
-        return 0
+        total_distance = 0
+        for box_position, box_letter in state.boxes.items():
+            if box_letter not in self.goal_positions:
+                continue
+        min_distance=min(
+            abs(box_position[0]-gx) + abs(box_position[1]-gy)
+            for(gx, gy) in self.goal_positions[box_letter]
+        )
+        total_distance+=min_distance
+        unsatisfied_goals=[
+            (position, letter) for position, letter in goal_description.goals.items()
+            if state.boxes.get(position)!=letter
+        ]
+        total_distance+=len(unsatisfied_goals)
+        return total_distance
     
 
 class HospitalGoalCountHeuristics:
 
     def __init__(self):
-        pass
+        self.goal_positions = {}
 
     def preprocess(self, level: h_level.HospitalLevel):
         # This function will be called a single time prior 
         # to the search allowing us to preprocess the level such as
         # pre-computing lookup tables or other acceleration structures
-
-        # not sure what there is to preprocess
         pass
+        # not sure what there is to preprocess
         #    raise NotImplementedError()
 
 
