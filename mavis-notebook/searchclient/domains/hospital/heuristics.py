@@ -69,7 +69,10 @@ class HospitalGoalCountHeuristics:
 class HospitalAdvancedHeuristics:
 
     def __init__(self):
-        raise NotImplementedError()
+        pass
+    
+    def __call__(self, state, goal_description):
+        return self.h(state, goal_description)
 
     def preprocess(self, level: h_level.HospitalLevel):
         # This function will be called a single time prior to the search allowing us to preprocess the level such as
@@ -78,4 +81,13 @@ class HospitalAdvancedHeuristics:
 
     def h(self, state: h_state.HospitalState, goal_description: h_goal_description.HospitalGoalDescription) -> int:
         # your heuristic goes here...      
-        raise NotImplementedError()
+        totalDistance = 0
+
+        for boxPos, boxLetter in state.boxes.items():
+            goals = [(x, y) for (x, y), letter in goal_description.goals.items()
+                     if letter == boxLetter]
+            if goals:
+                minDistance = min(abs(boxPos[0] - goalX) + abs(boxPos[1] - goalY)
+                               for goalX, goalY in goals)
+                totalDistance += minDistance
+        return totalDistance
