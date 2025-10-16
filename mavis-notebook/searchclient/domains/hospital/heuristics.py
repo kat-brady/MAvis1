@@ -99,11 +99,21 @@ class HospitalAdvancedHeuristics:
         # your heuristic goes here...      
         totalDistance = 0
 
-        for boxPos, boxLetter in state.boxes.items():
-            goals = [(x, y) for (x, y), letter in goal_description.goals.items()
-                     if letter == boxLetter]
-            if goals:
-                minDistance = min(abs(boxPos[0] - goalX) + abs(boxPos[1] - goalY)
-                               for goalX, goalY in goals)
+        for (agentPos, agentLetter) in state.agent_positions:
+            minDistance = float('inf')
+
+            for (goalPos, goalLetter) in goal_description.goals:
+                if goalLetter != agentLetter:
+                    continue
+
+                goalX, goalY = goalPos
+                dist = abs(agentPos[0] - goalX) + abs(agentPos[1] - goalY)
+
+                if dist < minDistance:
+                    minDistance = dist
+
+            if minDistance != float('inf'):
                 totalDistance += minDistance
+                
         return totalDistance
+
