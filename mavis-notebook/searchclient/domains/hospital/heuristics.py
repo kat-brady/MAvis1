@@ -78,7 +78,7 @@ class HospitalGoalCountHeuristics:
             if state.agent_at(goal_pos)[1] == expected_agent:
                 # print("match found")
                 remaining -= 1
-            # print("remaining goals:", remaining)
+            # print("remaining goals:", remaining)    # print("remaining goals:", remaining)
         return remaining
 
 class HospitalAdvancedHeuristics:
@@ -115,4 +115,5 @@ class HospitalAdvancedHeuristics:
                 totalDistance += minDistance
                 
         return totalDistance
+
 

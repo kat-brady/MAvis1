@@ -51,6 +51,11 @@ def graph_search(
     explored = set()
 
     while not frontier.is_empty():
+
+        # print("----------------------------")
+        # print("Iteration", iterations)
+        # print_search_status(explored, frontier)
+
         state = frontier.pop()
         iterations += 1
 

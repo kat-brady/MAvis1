@@ -138,6 +138,7 @@ class FrontierAStar(FrontierBestFirst):
 
     def f(self, state: h_state.HospitalState,
           goal_description: h_goal_description.HospitalGoalDescription) -> int:
+        # print("f:", self.g(state) + self.h(state, goal_description))
         return self.g(state) + self.h(state, goal_description)
         
 
@@ -148,6 +149,7 @@ class FrontierGreedy(FrontierBestFirst):
         self.heuristic = heuristic
 
     def f(self, state: h_state.HospitalState, goal_description: h_goal_description.HospitalGoalDescription) -> int:
+        # print("f:", self.heuristic.h(state, goal_description))
         return self.heuristic.h(state, goal_description)
     
 
