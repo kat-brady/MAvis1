@@ -64,23 +64,22 @@ class HospitalGoalCountHeuristics:
         # to the search allowing us to preprocess the level such as
         # pre-computing lookup tables or other acceleration structures
         pass
-        # not sure what there is to preprocess
-        #    raise NotImplementedError()
 
-
-    # TODO: modify GoalCount so that for every goal you check if an agent 
-    # of the corresponding character is occupying it
     def h(self, state: h_state.HospitalState, 
                 goal_description: h_goal_description.HospitalGoalDescription) -> int:
         remaining = goal_description.num_sub_goals()
 
-        # maybe making a list of sub goals would be something to preprocess?
         for goal in goal_description.goals:
-            if goal[2] == True:
+            goal_pos = goal[0]
+            expected_agent = goal[1]
+
+            # print("agent at goal pos:", state.agent_at(goal_pos)[1])
+            # print("expected agent at goal pos:", goal[1])
+            if state.agent_at(goal_pos)[1] == expected_agent:
+                # print("match found")
                 remaining -= 1
-        
+            # print("remaining goals:", remaining)
         return remaining
-        # raise NotImplementedError()
 
 class HospitalAdvancedHeuristics:
 
@@ -93,10 +92,9 @@ class HospitalAdvancedHeuristics:
     def preprocess(self, level: h_level.HospitalLevel):
         # This function will be called a single time prior to the search allowing us to preprocess the level such as
         # pre-computing lookup tables or other acceleration structures
-        raise NotImplementedError()
-
+        pass
+        
     def h(self, state: h_state.HospitalState, goal_description: h_goal_description.HospitalGoalDescription) -> int:
-        # your heuristic goes here...      
         totalDistance = 0
 
         for (agentPos, agentLetter) in state.agent_positions:
@@ -116,4 +114,5 @@ class HospitalAdvancedHeuristics:
                 totalDistance += minDistance
                 
         return totalDistance
+
 
