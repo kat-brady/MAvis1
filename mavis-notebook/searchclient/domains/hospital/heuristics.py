@@ -30,28 +30,11 @@ class HospitalZeroHeuristic:
         # This function will be called a single time prior 
         # to the search allowing us to preprocess the level such as
         # pre-computing lookup tables or other acceleration structures
-        self.goal_positions = defaultdict(list)
-        for(x,y), letter in level.goals.items():
-            self.goal_positions[letter].append((x,y))
-        
+        pass
 
     def h(self, state: h_state.HospitalState, 
                 goal_description: h_goal_description.HospitalGoalDescription) -> int:
-        total_distance = 0
-        for box_position, box_letter in state.boxes.items():
-            if box_letter not in self.goal_positions:
-                continue
-        min_distance=min(
-            abs(box_position[0]-gx) + abs(box_position[1]-gy)
-            for(gx, gy) in self.goal_positions[box_letter]
-        )
-        total_distance+=min_distance
-        unsatisfied_goals=[
-            (position, letter) for position, letter in goal_description.goals.items()
-            if state.boxes.get(position)!=letter
-        ]
-        total_distance+=len(unsatisfied_goals)
-        return total_distance
+        return 0
     
 
 class HospitalGoalCountHeuristics:
@@ -101,7 +84,8 @@ class HospitalAdvancedHeuristics:
         for (agentPos, agentLetter) in state.agent_positions:
             minDistance = float('inf')
 
-            for (goalPos, goalLetter) in goal_description.goals:
+            # a is not used for our purposes
+            for (goalPos, goalLetter, a) in goal_description.goals:
                 if goalLetter != agentLetter:
                     continue
 
@@ -115,5 +99,3 @@ class HospitalAdvancedHeuristics:
                 totalDistance += minDistance
                 
         return totalDistance
-
-
