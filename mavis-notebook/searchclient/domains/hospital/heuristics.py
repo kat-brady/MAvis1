@@ -24,8 +24,8 @@ import domains.hospital.level as h_level
 
 class HospitalZeroHeuristic:
     def __init__(self):
-        self.goal_positions = defaultdict(list)
-        
+        pass
+
     def preprocess(self, level: h_level.HospitalLevel):
         # This function will be called a single time prior 
         # to the search allowing us to preprocess the level such as
