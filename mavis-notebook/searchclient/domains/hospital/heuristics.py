@@ -99,3 +99,39 @@ class HospitalAdvancedHeuristics:
                 totalDistance += minDistance
                 
         return totalDistance
+    
+class MaxManhattan:
+
+    def __init__(self):
+        pass
+    
+    def __call__(self, state, goal_description):
+        return self.h(state, goal_description)
+
+    def preprocess(self, level: h_level.HospitalLevel):
+        # This function will be called a single time prior to the search allowing us to preprocess the level such as
+        # pre-computing lookup tables or other acceleration structures
+        pass
+
+    # find the maximum manhattan distance from the agents to their goals
+    def h(self, state: h_state.HospitalState, goal_description: h_goal_description.HospitalGoalDescription) -> int:
+        distances = []
+
+        for (agentPos, agentLetter) in state.agent_positions:
+            minDistance = float('inf')
+
+            # a is not used for our purposes
+            for (goalPos, goalLetter, a) in goal_description.goals:
+                if goalLetter != agentLetter:
+                    continue
+
+                goalX, goalY = goalPos
+                dist = abs(agentPos[0] - goalX) + abs(agentPos[1] - goalY)
+
+                if dist < minDistance:
+                    minDistance = dist
+
+            if minDistance != float('inf'):
+                distances.append(minDistance)
+                
+        return max(distances)
