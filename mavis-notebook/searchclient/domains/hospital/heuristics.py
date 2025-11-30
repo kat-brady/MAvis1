@@ -52,7 +52,7 @@ class HospitalGoalCountHeuristics:
                 goal_description: h_goal_description.HospitalGoalDescription) -> int:
         remaining = goal_description.num_sub_goals()
 
-        for goal in goal_description.goals:
+        for goal in goal_description.agent_goals:
             goal_pos = goal[0]
             expected_agent = goal[1]
 
@@ -61,7 +61,15 @@ class HospitalGoalCountHeuristics:
             if state.agent_at(goal_pos)[1] == expected_agent:
                 # print("match found")
                 remaining -= 1
-            # print("remaining goals:", remaining)    # print("remaining goals:", remaining)
+            # print("remaining goals:", remaining)
+
+        for goal in goal_description.box_goals:
+            goal_pos = goal[0]
+            expected_box = goal[1]
+
+            if state.box_at(goal_pos)[1] == expected_box:
+                # print("match found")
+                remaining -= 1
         return remaining
 
 class HospitalAdvancedHeuristics:
@@ -97,6 +105,23 @@ class HospitalAdvancedHeuristics:
 
             if minDistance != float('inf'):
                 totalDistance += minDistance
+
+        for (boxPos, boxLetter) in state.box_positions:
+            minDistance = float('inf')
+
+            # a is not used for our purposes
+            for (goalPos, goalLetter, a) in goal_description.goals:
+                if goalLetter != boxLetter:
+                    continue
+
+                goalX, goalY = goalPos
+                dist = abs(boxPos[0] - goalX) + abs(boxPos[1] - goalY)
+
+                if dist < minDistance:
+                    minDistance = dist
+
+            if minDistance != float('inf'):
+                totalDistance += minDistance
                 
         return totalDistance
     
@@ -113,7 +138,7 @@ class MaxManhattan:
         # pre-computing lookup tables or other acceleration structures
         pass
 
-    # find the maximum manhattan distance from the agents to their goals
+    # find the maximum manhattan distance from the agents/boxes to their goals
     def h(self, state: h_state.HospitalState, goal_description: h_goal_description.HospitalGoalDescription) -> int:
         distances = []
 
@@ -133,5 +158,22 @@ class MaxManhattan:
 
             if minDistance != float('inf'):
                 distances.append(minDistance)
-                
+        
+        # check box positions
+        for (boxPos, boxLetter) in state.box_positions:
+            minDistance = float('inf')
+
+            # a is not used for our purposes
+            for (goalPos, goalLetter, a) in goal_description.goals:
+                if goalLetter != boxLetter:
+                    continue
+
+                goalX, goalY = goalPos
+                dist = abs(boxPos[0] - goalX) + abs(boxPos[1] - goalY)
+
+                if dist < minDistance:
+                    minDistance = dist
+
+            if minDistance != float('inf'):
+                distances.append(minDistance)
         return max(distances)
