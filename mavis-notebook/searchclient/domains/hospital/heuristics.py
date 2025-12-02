@@ -177,3 +177,118 @@ class MaxManhattan:
             if minDistance != float('inf'):
                 distances.append(minDistance)
         return max(distances)
+
+#heuristic inspired by Hungarian algorithm but also taking into consideration Manhattan distance
+#latter half (hungarian implementation) assisted by vscode copilot
+class HungarianHeuristic:
+
+    def __init__(self):
+        pass
+
+    def __call__(self, state, goal_description):
+        return self.h(state, goal_description)
+
+    def preprocess(self, level: h_level.HospitalLevel):
+        # This function will be called a single time prior to the search allowing us to preprocess the level such as
+        # pre-computing lookup tables or other acceleration structures
+        pass
+
+    def h(self, state, goal_description):
+        # group boxes and goals by letter (Sokoban, box A to goal A)
+        boxes_by_letter = {}
+        for (pos,letter)in state.box_positions:
+            boxes_by_letter.setdefault(letter, []).append(pos)
+        goals_by_letter = {}
+        for (pos, letter, _) in goal_description.goals:
+            goals_by_letter.setdefault(letter, []).append(pos)
+
+        #initializing total cost variable for later usage
+        total_cost = 0
+        #referring to the impossible state (when its used, this shouldn't be happening)
+        INF = 10**9
+
+        # we need to solve each sub-problem in sokoban on its own (ie A, then B, then C)
+        for letter, box_positions in boxes_by_letter.items():
+            if letter not in goals_by_letter:
+                # make use of impossible state in case a letter that doesn't exist makes it in
+                return INF
+
+            goal_positions = goals_by_letter[letter]
+            n = len(box_positions)
+            m = len(goal_positions)
+
+            if m < n:
+                # in case there are mismatching box and goal counts
+                return INF
+
+            #in research, hungarian works off square matrices, so this is converting/building a matrix
+            size = max(n, m)
+            #in case of dead space
+            cost = [[INF]*size for _ in range(size)]
+
+            #now, actually attribute the boxes to their matching goals
+            for i, (bx, by) in enumerate(box_positions):
+                for j, (gx, gy) in enumerate(goal_positions):
+                    #ASsinging box i to goal j 
+                    cost[i][j] = abs(bx - gx) + abs(by - gy)
+
+            # now, funneling this into the hungarian algorithm as defined in code
+            assignment_cost = self.hungarian(cost)
+            total_cost += assignment_cost
+
+        return total_cost
+    
+    #Hungarian algorithm implementation
+    #assign
+    def hungarian(self, cost):
+        n =len(cost)
+        #r for row
+        r =[0]* (n+1)
+        #c for column
+        c = [0]* (n+1)
+        p= [0]* (n+1)
+        way = [0]* (n+1)
+
+        #loop designed to assign a box i to matching goal
+        for i in range(1, n+1):
+            p[0] =i
+            j0 =0
+            #holding on to lowest cost seen thus far
+            minv= [float('inf')] * (n+1)
+            #was used?
+            used = [False] *(n+1)
+            #inner loop
+            while True:
+                used[j0] = True
+                i0 = p[j0]
+                delta =float('inf')
+                j1 = 0
+                #working with assignments, continue keeping track of lowest cost
+                for j in range(1, n+1):
+                    if not used[j]:
+                        cur = cost[i0-1][j-1] - r[i0] - c[j]
+                        if cur < minv[j]:
+                            minv[j] = cur
+                            way[j] = j0
+                        if minv[j] < delta:
+                            delta = minv[j]
+                            j1 = j
+                # Updating so that tje optimal cost(assignments leading to that) are maintained
+                for j in range(n+1):
+                    if used[j]:
+                        r[p[j]] += delta
+                        c[j] -= delta
+                    else:
+                        minv[j] -= delta
+                j0 =j1
+                if p[j0] ==0:
+                    break
+            #backtracking and checking assignments against optimality
+            while True:
+                j1 = way[j0]
+                p[j0] = p[j1]
+                j0 = j1
+                if j0== 0:
+                    break
+
+        return -c[0]
